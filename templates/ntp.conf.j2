@@ -13,26 +13,36 @@ filegen loopstats file loopstats type day enable
 filegen peerstats file peerstats type day enable
 filegen clockstats file clockstats type day enable
 
-# Use public servers from the pool.ntp.org project.
-# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+# The servers that we poll for time, e.g. stuff in the pool.ntp.org project.
 {% for item in ntp_servers %}
-server {{ item }}
+server {{ item }} iburst
+{% endfor %}
+
+# Our local peers.
+{% for item in ntp_peers %}
+peer {{ item }}
 {% endfor %}
 
 # Permit time synchronization with our time source, but do not
 # permit the source to query or modify the service on this system.
 restrict default nomodify notrap nopeer noquery
 
+# Clients that can poll us.
+{% for item in ntp_clients %}
+restrict {{ item }} nomodify notrap nopeer
+{% endfor %}
+
+# Clients that are peers.
+{% for item in ntp_peers %}
+restrict {{ item }} nomodify notrap
+{% endfor %}
+
 # Permit all access over the loopback interface.  This could
 # be tightened as well, but to do so would effect some of
 # the administrative functions.
-{% for item in ntp_restrict %}
+{% for item in ntp_localhosts %}
 restrict {{ item }}
 {% endfor %}
-
-# Clients from this (example!) subnet have unlimited access, but only if
-# cryptographically authenticated.
-#restrict 192.168.123.0 mask 255.255.255.0 notrust
 
 # Enable public key cryptography.
 #crypto

@@ -12,7 +12,7 @@ None.
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
-    ntp_enabled: true
+    ntp_enabled: True
 
 Whether to start the ntpd service and enable it at system boot. On many virtual machines that run inside a container (like OpenVZ or VirtualBox), it's recommended you don't run the NTP daemon, since the host itself should be set to synchronize time for all it's child VMs.
 
@@ -20,7 +20,7 @@ Whether to start the ntpd service and enable it at system boot. On many virtual 
 
 Set the timezone for your server.
 
-    ntp_manage_config: false
+    ntp_manage_config: False
 
 Set to true to allow this role to manage the NTP configuration file (`/etc/ntp.conf`).
 
@@ -29,18 +29,37 @@ Set to true to allow this role to manage the NTP configuration file (`/etc/ntp.c
 Set the [NTP Pool Area](http://support.ntp.org/bin/view/Servers/NTPPoolServers) to use. Defaults to none, which uses the worldwide pool.
 
     ntp_servers:
-      - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-      - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-      - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
-      - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org iburst"
+      - "0{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org"
+      - "1{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org"
+      - "2{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org"
+      - "3{{ '.' + ntp_area if ntp_area else '' }}.pool.ntp.org"
 
-Specify the NTP servers you'd like to use. Only takes effect if you allow this role to manage NTP's configuration, by setting `ntp_manage_config` to `True`.
+Specify the NTP servers you'd like to use.   The *iburst* flag isset on all servers.
 
-    ntp_restrict:
+    ntp_localhosts:
       - "127.0.0.1"
       - "::1"
 
-Restrict NTP access to these hosts; loopback only, by default.
+Specifiy NTP clients that should have full access to the server, typically just localhost.  Only takes effect if you allow this role to manage NTP's configuration, by setting `ntp_manage_config` to `True`.
+
+    ntp_clients:
+      - "192.168.0.0/24"
+      - "192.168.1.0/24""
+
+Specifiy NTP clients that should have full polling access to the server, typically machines on local networks.  Only takes effect if you allow this role to manage NTP's configuration, by setting `ntp_manage_config` to `True`.
+
+    ntp_clients:
+      - "192.168.0.0/24"
+      - "192.168.1.0/24""
+
+Specifiy NTP clients that should have full polling access to the server, typically machines on local networks.  Only takes effect if you allow this role to manage NTP's configuration, by setting `ntp_manage_config` to `True`.
+
+    ntp_peers:
+      - "192.168.0.4"
+      - "192.168.0.5""
+
+Specifiy NTP peers servers that should have full a symmetric time adjustment relationship.  Only takes effect if you allow this role to manage NTP's configuration, by setting `ntp_manage_config` to `True`.
+
 
 ## Dependencies
 
